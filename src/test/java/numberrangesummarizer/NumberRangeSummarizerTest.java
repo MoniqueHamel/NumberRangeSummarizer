@@ -1,5 +1,6 @@
 package numberrangesummarizer;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class NumberRangeSummarizerTest {
@@ -29,8 +31,22 @@ public class NumberRangeSummarizerTest {
                 arguments("-1, -2, -3, -4", Arrays.asList(-4, -3, -2, -1)),
                 arguments("1,      2, 2, 4", Arrays.asList(1, 2, 2, 4)),
                 arguments("80, 40, 60, -100", Arrays.asList(-100, 40, 60, 80)),
-                arguments("1", Arrays.asList(1))
+                arguments("", Arrays.asList()),
+                arguments("1", Arrays.asList(1)),
+                arguments("1,,,2, 3", Arrays.asList(1, 2, 3))
         );
+    }
+
+    @Test
+    public void testCollect_invalidDelimiter() {
+        assertThrows(NumberFormatException.class, () ->
+                summarizer.collect("1 2 3"));
+    }
+
+    @Test
+    public void testCollect_nullInput() {
+        assertThrows(NullPointerException.class, () ->
+                summarizer.collect(null));
     }
 
     @ParameterizedTest

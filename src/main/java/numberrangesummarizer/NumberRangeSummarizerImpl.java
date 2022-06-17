@@ -41,6 +41,18 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
 
     @Override
     public String summarizeCollection(Collection<Integer> input) {
+        if (input == null) {
+            throw new NullPointerException();
+        }
+
+        if (input.size() == 1) {
+            return input.toString();
+        }
+
+        if (input.isEmpty()) {
+            return "";
+        }
+
         StringBuilder sb = new StringBuilder("");
         List<Integer> numberList = new ArrayList<>(input);
         numberList.sort(Comparator.naturalOrder());

@@ -5,13 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class NumberRangeSummarizerTest {
@@ -43,10 +40,19 @@ public class NumberRangeSummarizerTest {
                 summarizer.collect("1 2 3"));
     }
 
-    @Test
-    public void testCollect_nullInput() {
-        assertThrows(NullPointerException.class, () ->
-                summarizer.collect(null));
+    @ParameterizedTest
+    @MethodSource("invalidCollectionProvider")
+    public <T extends Throwable> void testCollect_invalidString(String input, Class<T> expectedError) {
+        assertThrows(expectedError, () ->
+                summarizer.collect(input));
+    }
+
+    static Stream<Arguments> invalidCollectionProvider() {
+        return Stream.of(
+                arguments("1.255, 3.755", NumberFormatException.class),
+                arguments(null, NullPointerException.class),
+                arguments("three", NumberFormatException.class)
+        );
     }
 
     @ParameterizedTest
@@ -64,7 +70,31 @@ public class NumberRangeSummarizerTest {
                 arguments(Arrays.asList(2, 2, 2, 2), "2"),
                 arguments(Arrays.asList(2, 2, 2, 2, 3, 4, 8), "2-4, 8"),
                 arguments(Arrays.asList(0, 2, 2, 2, 3, 4, 8), "0, 2-4, 8"),
+                arguments(Arrays.asList(), ""),
                 arguments(Set.of(4, 9, 12, 3, 8), "3-4, 8-9, 12")
         );
     }
+
+    @Test
+    public void testSummarizeCollection_stack() {
+        Stack<Integer> testStack = new Stack<>();
+
+        testStack.push(4);
+        testStack.push(0);
+        testStack.push(2);
+        testStack.push(-5);
+        testStack.push(3);
+
+        String actual = summarizer.summarizeCollection(testStack);
+        String expected = "-5, 0, 2-4";
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testSummarizeCollection_nullInput() {
+        assertThrows(NullPointerException.class, () ->
+                summarizer.summarizeCollection(null));
+    }
+
 }

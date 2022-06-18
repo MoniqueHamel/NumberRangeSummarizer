@@ -7,6 +7,11 @@ import java.util.List;
 
 public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
 
+    /**
+     *
+     * @param input comma delimited string of integers.
+     * @return a collection of integers sorted in ascending order.
+     */
     @Override
     public Collection<Integer> collect(String input) {
         if (input == null) {
@@ -19,7 +24,6 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
         String[] stringArray = input.split(",");
         List<Integer> listOfIntegers = new ArrayList<>();
         for (String num : stringArray) {
-            //Use trim to remove whitespace before and after num
             String n = num.trim();
 
             if (n.equals("")) {
@@ -33,20 +37,21 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
                 throw e;
             }
         }
-        //Sort listOfIntegers from smallest to largest
+        //Sort listOfIntegers in ascending order
         listOfIntegers.sort(Comparator.naturalOrder());
 
         return listOfIntegers;
     }
 
+    /**
+     *
+     * @param input collection of integers sorted in ascending order.
+     * @return a comma delimited string with contiguous ranges summarized, e.g "1, 3-7, 12".
+     */
     @Override
     public String summarizeCollection(Collection<Integer> input) {
         if (input == null) {
             throw new NullPointerException();
-        }
-
-        if (input.size() == 1) {
-            return input.toString();
         }
 
         if (input.isEmpty()) {
@@ -54,26 +59,31 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
         }
 
         StringBuilder sb = new StringBuilder("");
-        List<Integer> numberList = new ArrayList<>(input);
-        numberList.sort(Comparator.naturalOrder());
 
-        int end = numberList.get(0); //previous number
-        int start = end; //start of range
+        int startOfRange = input.iterator().next();
+        int endOfRange = startOfRange;
 
-        for (int i = 1; i < numberList.size(); i++) {
-            int current = numberList.get(i);
-
-            if (current > end + 1) {
-                appendRange(start, end, sb);
+        for (Integer current : input) {
+            if (current > endOfRange + 1) {
+                appendRange(startOfRange, endOfRange, sb);
                 sb.append(", ");
-                start = current;
+                startOfRange = current;
             }
 
-            end = current;
+            endOfRange = current;
         }
 
-        appendRange(start, end, sb);
+        appendRange(startOfRange, endOfRange, sb);
         return sb.toString();
+    }
+
+    /**
+     * Sorts and summarizes a string of integers.
+     * @param input comma delimited string of integers.
+     * @return a comma delimited string with contiguous ranges summarized, e.g "1, 3-7, 12".
+     */
+    public String collectAndSummarize(String input) {
+        return summarizeCollection(collect(input));
     }
 
     private static void appendRange(int start, int end, StringBuilder sb) {

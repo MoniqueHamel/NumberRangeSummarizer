@@ -70,8 +70,7 @@ public class NumberRangeSummarizerTest {
                 arguments(Arrays.asList(2, 2, 2, 2), "2"),
                 arguments(Arrays.asList(2, 2, 2, 2, 3, 4, 8), "2-4, 8"),
                 arguments(Arrays.asList(0, 2, 2, 2, 3, 4, 8), "0, 2-4, 8"),
-                arguments(Arrays.asList(), ""),
-                arguments(Set.of(4, 9, 12, 3, 8), "3-4, 8-9, 12")
+                arguments(Arrays.asList(), "")
         );
     }
 
@@ -79,11 +78,11 @@ public class NumberRangeSummarizerTest {
     public void testSummarizeCollection_stack() {
         Stack<Integer> testStack = new Stack<>();
 
-        testStack.push(4);
+        testStack.push(-5);
         testStack.push(0);
         testStack.push(2);
-        testStack.push(-5);
         testStack.push(3);
+        testStack.push(4);
 
         String actual = summarizer.summarizeCollection(testStack);
         String expected = "-5, 0, 2-4";
@@ -95,6 +94,24 @@ public class NumberRangeSummarizerTest {
     public void testSummarizeCollection_nullInput() {
         assertThrows(NullPointerException.class, () ->
                 summarizer.summarizeCollection(null));
+    }
+
+    @ParameterizedTest
+    @MethodSource("collectAndSummarizeProvider")
+    public void collectAndSummarize(String input, String expected) {
+        NumberRangeSummarizerImpl testSummarizer = new NumberRangeSummarizerImpl();
+        String actual = testSummarizer.collectAndSummarize(input);
+        assertEquals(expected, actual);
+    }
+
+    static Stream<Arguments> collectAndSummarizeProvider() {
+        return Stream.of(
+                arguments("1, 2, 3, 4", "1-4"),
+                arguments("-1, -2, -3, -4", "-4--1"),
+                arguments("80, 40, 60, -100", "-100, 40, 60, 80"),
+                arguments("", ""),
+                arguments("1", "1")
+        );
     }
 
 }

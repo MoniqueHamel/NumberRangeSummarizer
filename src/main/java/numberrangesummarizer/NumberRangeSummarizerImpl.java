@@ -1,9 +1,6 @@
 package numberrangesummarizer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
 
@@ -14,15 +11,19 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
      */
     @Override
     public Collection<Integer> collect(String input) {
+        return collect(input, ",");
+    }
+
+    public Collection<Integer> collect(String input, String delimiter) {
         if (input == null) {
             throw new NullPointerException();
         }
         if (input.trim().equals("")) {
-            return new ArrayList<>();
+            return new TreeSet<>();
         }
 
-        String[] stringArray = input.split(",");
-        List<Integer> listOfIntegers = new ArrayList<>();
+        String[] stringArray = input.split(delimiter);
+        Set<Integer> setOfIntegers = new TreeSet<>();
         for (String num : stringArray) {
             String n = num.trim();
 
@@ -32,15 +33,13 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
 
             try {
                 int number = Integer.parseInt(n);
-                listOfIntegers.add(number);
+                setOfIntegers.add(number);
             } catch (NumberFormatException e) {
                 throw e;
             }
         }
-        //Sort listOfIntegers in ascending order
-        listOfIntegers.sort(Comparator.naturalOrder());
 
-        return listOfIntegers;
+        return setOfIntegers;
     }
 
     /**
@@ -50,6 +49,10 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
      */
     @Override
     public String summarizeCollection(Collection<Integer> input) {
+        return summarizeCollection(input, ", ");
+    }
+
+    public String summarizeCollection(Collection<Integer> input, String delimiter) {
         if (input == null) {
             throw new NullPointerException();
         }
@@ -66,7 +69,7 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
         for (Integer current : input) {
             if (current > endOfRange + 1) {
                 appendRange(startOfRange, endOfRange, sb);
-                sb.append(", ");
+                sb.append(delimiter);
                 startOfRange = current;
             }
 

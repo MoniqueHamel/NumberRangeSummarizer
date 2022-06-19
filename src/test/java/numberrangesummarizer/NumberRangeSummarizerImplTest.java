@@ -11,15 +11,16 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class NumberRangeSummarizerTest {
+public class NumberRangeSummarizerImplTest {
 
-    private static final NumberRangeSummarizer summarizer = new NumberRangeSummarizerImpl();
+    private static final NumberRangeSummarizerImpl summarizer = new NumberRangeSummarizerImpl();
 
     @ParameterizedTest
     @MethodSource("testCollectProvider")
     public void testCollect(String input, Collection<Integer> expected) {
         Collection<Integer> actual = summarizer.collect(input);
-        assertEquals(expected, actual);
+        Set<Integer> expectedSet = new TreeSet<>(expected);
+        assertEquals(expectedSet, actual);
     }
 
     static Stream<Arguments> testCollectProvider() {
@@ -99,8 +100,7 @@ public class NumberRangeSummarizerTest {
     @ParameterizedTest
     @MethodSource("collectAndSummarizeProvider")
     public void collectAndSummarize(String input, String expected) {
-        NumberRangeSummarizerImpl testSummarizer = new NumberRangeSummarizerImpl();
-        String actual = testSummarizer.collectAndSummarize(input);
+        String actual = summarizer.collectAndSummarize(input);
         assertEquals(expected, actual);
     }
 

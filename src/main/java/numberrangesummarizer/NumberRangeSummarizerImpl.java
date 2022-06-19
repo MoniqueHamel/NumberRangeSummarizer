@@ -14,6 +14,12 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
         return collect(input, ",");
     }
 
+    /**
+     *
+     * @param input string of integers
+     * @param delimiter string specifying delimiter
+     * @return a collection of integers sorted in ascending order.
+     */
     public Collection<Integer> collect(String input, String delimiter) {
         if (input == null) {
             throw new NullPointerException();
@@ -52,6 +58,12 @@ public class NumberRangeSummarizerImpl implements NumberRangeSummarizer{
         return summarizeCollection(input, ", ");
     }
 
+    /**
+     *
+     * @param input collection of integers sorted in ascending order.
+     * @param delimiter string specifying delimiter
+     * @return a delimited string with contiguous ranges summarized, e.g "1, 3-7, 12".
+     */
     public String summarizeCollection(Collection<Integer> input, String delimiter) {
         if (input == null) {
             throw new NullPointerException();
